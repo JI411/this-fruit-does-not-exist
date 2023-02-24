@@ -1,4 +1,5 @@
-# pylint disable=super-init-not-called
+# pylint: disable=super-init-not-called
+
 import typing as tp
 
 import albumentations as albu
