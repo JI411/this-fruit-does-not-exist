@@ -9,7 +9,6 @@ import const
 class StableDiffusionGenerator:
     """Stable Diffusion Generator."""
 
-
     def __init__(self):
         """Init Stable Diffusion Generator."""
         self.pipe = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", torch_dtype=torch.float16)
