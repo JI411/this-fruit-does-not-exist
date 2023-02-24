@@ -32,23 +32,3 @@ def bg_remove_hsv(
     mask = cv2.erode(mask, None, iterations=3)
     mask = cv2.dilate(mask, None, iterations=7)
     return mask
-
-
-def bg_remove_grad_cam(image: np.ndarray, cam: BaseCAM) -> np.ndarray:
-    """Remove background using Grad-CAM."""
-    transform = albu.Compose([albu.Resize(224, 224), albu.Normalize(), ToTensorV2()])
-    input_tensor = transform(image=image)['image'][None]
-    targets = [ClassifierOutputTarget(954)]
-    # noinspection PyTypeChecker
-    grayscale_cam = cam(input_tensor=input_tensor, targets=targets)
-    grayscale_cam = grayscale_cam[0, :]
-    grayscale_cam = cv2.resize(grayscale_cam, (image.shape[1], image.shape[0]))
-    grayscale_cam = cv2.cvtColor(grayscale_cam, cv2.COLOR_GRAY2BGR)
-    return (grayscale_cam > 0.3) * image
-
-
-    # model = timm.create_model('resnet34', pretrained=True)
-    # target_layers = [model.layer4[-1]]
-    # cam = HiResCAM(model=model, target_layers=target_layers, use_cuda=False)
-    # components.show_image(bg_remove_gradcam(img, cam=cam))
-    # components.show_image(bg_remove_hsv(bg_remove_gradcam(img, cam=cam)))
