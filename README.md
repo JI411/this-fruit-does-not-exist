@@ -1,4 +1,4 @@
-# This fruit doesn't exist - synthetic fruit generator
+# This fruit doesn't exist - synthetic fruit generation
 
 
 ## MVP
