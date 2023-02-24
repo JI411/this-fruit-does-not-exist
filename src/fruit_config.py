@@ -8,8 +8,8 @@ import const
 class FruitConfig:
     """Fruits class config for hsv segmentation."""
     name: str
-    prompt: str = None
-    num_images: int = 10
+    prompt: tp.Optional[str] = None
+    num_images: int = 30
     hsv_lower: tp.Iterable[tp.Tuple[int, int, int]] = ((0, 40, 0),)
     hsv_upper: tp.Iterable[tp.Tuple[int, int, int]] = ((255, 255, 255),)
     size_limit: tp.Tuple[int, int] = (30 * 30, 350 * 350)
@@ -19,7 +19,7 @@ class FruitConfig:
         """Post init hook. Convert lists to tuples and set default prompt."""
         self.hsv_lower = tuple(self.hsv_lower)
         self.hsv_upper = tuple(self.hsv_upper)
-        self.prompt = self.prompt or f'A single {self.name.lower()} in plain white or gray background.'
+        self.prompt = self.prompt or f'A colored single {self.name.lower()} on a plain white or gray background.'
 
 
 banana = FruitConfig(
