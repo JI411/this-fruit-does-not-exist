@@ -34,6 +34,12 @@ def save_json(path: const.PathType, data: tp.Any) -> None:
         json.dump(data, file, indent=4)
 
 
+def read_json(path: const.PathType) -> tp.Any:
+    """Read json from path."""
+    with open(str(path), 'r', encoding='utf-8') as file:
+        return json.load(file)
+
+
 def seed_everything(seed: int = const.SEED):
     """Seed everything for reproducibility."""
     random.seed(seed)

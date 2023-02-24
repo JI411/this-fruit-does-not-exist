@@ -9,7 +9,7 @@ class FruitConfig:
     """Fruits class config for hsv segmentation."""
     name: str
     prompt: str = None
-    num_images: int = 60
+    num_images: int = 10
     hsv_lower: tp.Iterable[tp.Tuple[int, int, int]] = ((0, 40, 0),)
     hsv_upper: tp.Iterable[tp.Tuple[int, int, int]] = ((255, 255, 255),)
     size_limit: tp.Tuple[int, int] = (30 * 30, 350 * 350)
