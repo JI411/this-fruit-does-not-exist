@@ -29,10 +29,10 @@ class StableDiffusionGenerator:
         return all_images
 
     @staticmethod
-    def save_images(images, save_path: const.PathType, name: str) -> None:
+    def save_images(images, save_path: const.PathType, name: str, suffix: str = '.jpg') -> None:
         """Save images to disk."""
         name = name.lower().replace(' ', '_').replace('.', '')
         save_path = Path(save_path)
         save_path.mkdir(exist_ok=True, parents=True)
         for i, image in enumerate(images):
-            image.save(save_path / f'{name}_{i}.jpg')
+            image.save(save_path / f'{name}_{i}{suffix}')

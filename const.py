@@ -14,6 +14,8 @@ SampleType = tp.TypedDict('SampleType', {'image_path': str, 'mask_path': str, 'f
 # Models
 STABLE_DIFFUSION_BATCH_SIZE: tp.Final[int] = 5
 SEED: tp.Final[int] = 411
+NUM_SAMPLES_PER_FRUIT: tp.Final[int] = 30
+NUM_BACKGROUND_IMAGES: tp.Final[int] = 50
 
 # Paths
 ROOT_DIR = Path(__file__).resolve(strict=True).parent
@@ -21,11 +23,15 @@ ROOT_DIR = Path(__file__).resolve(strict=True).parent
 SRC_DIR: tp.Final[Path] = ROOT_DIR / 'src'
 DATA_DIR: tp.Final[Path] = ROOT_DIR / 'data'
 LOG_DIR: tp.Final[Path] = ROOT_DIR / 'logs'
+BACKGROUND_DIR: tp.Final[Path] = DATA_DIR / 'background'
+REAL_FRUITS_DIR: tp.Final[Path] = DATA_DIR / 'real_fruits'
 
 
 # Fruits
 FRUITS_NAMES: tp.Tuple[str, ...] = (
-    'Apple', 'Banana', 'Carambola',
+    'Apple', 'Banana', 'Tomatoes', 'Orange',
+
+    # 'Apple', 'Banana', 'Carambola',
     # 'Guava', 'Kiwi', 'Mango', 'muskmelon',
     # 'Orange', 'Peach', 'Pear', 'Persimmon',
     # 'Pitaya', 'Plum', 'Pomegranate', 'Tomatoes'

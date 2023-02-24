@@ -16,7 +16,7 @@ def read_image(path: const.PathType, bgr2rgb: bool = True) -> np.ndarray:
     image = cv2.imread(str(path))
     if image is None:
         raise FileNotFoundError(f'Image {path} not found')
-    if bgr2rgb:
+    if bgr2rgb and image.shape[-1] == 3:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     return image
 
