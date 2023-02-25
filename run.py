@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 
 from pytorch_lightning import Trainer
+from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.utilities.seed import seed_everything
 
@@ -13,7 +14,7 @@ from src.train.model import UnetWrapper
 
 def main(args):
     """Main function. Generate images and masks for all fruits, train segmentation model."""
-    seed_everything(const.SEED, workers=True)
+    # seed_everything(const.SEED, workers=True)  # todo: fix seed
     if not args.skip_generation:
         generate_dataset.generate_images_for_fruits()
         generate_dataset.generate_masks_for_all_fruits()
@@ -32,9 +33,12 @@ def main(args):
     model = FruitSegmentationModule(
         model=net(), batch_size=batch_size, real_images=tuple(const.REAL_FRUITS_DIR.rglob('*.jpeg'))
     )
-    wandb_logger = WandbLogger(project="this-fruit-does-not-exist", save_dir=const.LOG_DIR)
+    wandb_logger = WandbLogger(project="this-fruit-does-not-exist", save_dir=const.LOG_DIR, log_model="all")
     wandb_logger.watch(model)
-    trainer = Trainer.from_argparse_args(args, logger=wandb_logger)
+    checkpoint_callback = ModelCheckpoint(
+        monitor="train_loss", mode="min", filename="best_model_{epoch:02d}_{train_loss:.2f}",
+    )
+    trainer = Trainer.from_argparse_args(args, logger=wandb_logger, callbacks=[checkpoint_callback])
     trainer.fit(model)
 
 
