@@ -50,7 +50,7 @@ class BaseFruitSegmentationModule(pl.LightningModule):
         predict = self.model(sample)
         predict = tensor_to_numpy_image(torch.sigmoid(predict))
         predict = predict - predict.min()
-        predict = predict / predict.max()
+        predict /= predict.max() + 1e-5
         predict = cv2.cvtColor(predict, cv2.COLOR_GRAY2RGB)
         original_image = tensor_to_numpy_image(original_sample)
         self.logger.log_image(key=key, images=[
