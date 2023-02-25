@@ -2,9 +2,9 @@ from pathlib import Path
 
 import torch
 from diffusers import StableDiffusionPipeline
+from pytorch_lightning.utilities.seed import seed_everything
 
 import const
-from src.components import utils
 
 
 class StableDiffusionGenerator:
@@ -14,7 +14,7 @@ class StableDiffusionGenerator:
         """Init Stable Diffusion Generator."""
         self.pipe = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", torch_dtype=torch.float16)
         self.pipe = self.pipe.to("cuda")
-        utils.seed_everything(const.SEED)
+        seed_everything(const.SEED, workers=True)
 
     def run(self, prompt: str, num_images_per_prompt: int = 3):
         """Generate images from prompt."""

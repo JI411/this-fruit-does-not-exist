@@ -6,6 +6,7 @@ from pytorch_lightning.utilities.seed import seed_everything
 
 import const
 from src import generate_dataset
+from src.generate_dataset import generate_background
 from src.train.lightning import BaseFruitSegmentationModule, FruitSegmentationModule
 from src.train.model import UnetWrapper
 
@@ -16,6 +17,7 @@ def main(args):
     if not args.skip_generation:
         generate_dataset.generate_images_for_fruits()
         generate_dataset.generate_masks_for_all_fruits()
+        generate_background()
 
     if args.skip_train:
         return
