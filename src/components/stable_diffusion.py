@@ -14,7 +14,6 @@ class StableDiffusionGenerator:
         """Init Stable Diffusion Generator."""
         self.pipe = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", torch_dtype=torch.float16)
         self.pipe = self.pipe.to("cuda")
-        seed_everything(const.SEED, workers=True)
 
     def run(self, prompt: str, num_images_per_prompt: int = 3):
         """Generate images from prompt."""
