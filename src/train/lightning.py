@@ -24,7 +24,7 @@ def tensor_to_numpy_image(tensor: torch.Tensor) -> tp.Any:
 class BaseFruitSegmentationModule(pl.LightningModule):
     """Lightning wrapper for models, connect loss, dataloader and model."""
 
-    mask_logging_thresholds = (0., 0.4, 0.5, 0.7, 0.8, 0.9)
+    mask_logging_thresholds = (0., 0.1, 0.2, 0.3, 0.5, 0.6, 0.8)
 
     def __init__(self, model: BaseModel, batch_size: int) -> None:
         """Create model for training."""
@@ -49,6 +49,8 @@ class BaseFruitSegmentationModule(pl.LightningModule):
     def _log_images(self, sample: torch.Tensor, original_sample: torch.Tensor, key: str):
         predict = self.model(sample)
         predict = tensor_to_numpy_image(torch.sigmoid(predict))
+        predict = predict - predict.min()
+        predict = predict / predict.max()
         predict = cv2.cvtColor(predict, cv2.COLOR_GRAY2RGB)
         original_image = tensor_to_numpy_image(original_sample)
         self.logger.log_image(key=key, images=[
