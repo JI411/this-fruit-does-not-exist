@@ -40,7 +40,7 @@ class BaseFruitSegmentationModule(pl.LightningModule):
         score = self.loss.forward(y_pred=predict, y_true=batch['mask'])
         self.log("train_loss", score)
 
-        if self.logger is not None and batch_idx % 10 == 0:
+        if self.logger is not None and batch_idx % 2 == 0:
             sample, original_sample = batch['image'][0][None], batch['original_image'][0][None]
             self._log_images(sample, original_sample, key=f'synthetic_{batch_idx}')
         return score
