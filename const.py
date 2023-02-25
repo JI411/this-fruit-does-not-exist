@@ -29,10 +29,9 @@ REAL_FRUITS_DIR: tp.Final[Path] = DATA_DIR / 'real_fruits'
 
 # Fruits
 FRUITS_NAMES: tp.Tuple[str, ...] = (
-    'Apple', 'Banana', 'Tomatoes', 'Orange',
-
-    # 'Apple', 'Banana', 'Carambola',
-    # 'Guava', 'Kiwi', 'Mango', 'muskmelon',
-    # 'Orange', 'Peach', 'Pear', 'Persimmon',
-    # 'Pitaya', 'Plum', 'Pomegranate', 'Tomatoes'
+    # 'Apple', 'Banana', 'Tomatoes', 'Orange',
+    'Apple', 'Banana', 'Carambola',
+    'Guava', 'Kiwi', 'Mango', 'muskmelon',
+    'Orange', 'Peach', 'Pear', 'Persimmon',
+    'Pitaya', 'Plum', 'Pomegranate', 'Tomatoes'
 )
