@@ -26,8 +26,9 @@ def generate_images_for_fruit(cfg: FruitConfig, generator: tp.Optional[StableDif
 
 def generate_images_for_fruits():
     """Generate images for all fruits."""
+    generator = StableDiffusionGenerator()
     for cfg in FRUIT_CONFIGS_FOR_ALL_NAMES:
-        generate_images_for_fruit(cfg, generator=StableDiffusionGenerator())
+        generate_images_for_fruit(cfg, generator=generator)
 
 def generate_masks(cfg: FruitConfig, save_examples: bool = True) -> tp.List[const.SampleType]:
     """Generate and return masks for fruit, use parameters from config."""
