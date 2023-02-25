@@ -2,8 +2,6 @@ from pathlib import Path
 
 import torch
 from diffusers import StableDiffusionPipeline
-from pytorch_lightning.utilities.seed import seed_everything
-
 import const
 
 
