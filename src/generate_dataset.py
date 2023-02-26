@@ -26,8 +26,9 @@ def generate_images_for_fruit(cfg: FruitConfig, generator: tp.Optional[StableDif
 
 def generate_images_for_fruits():
     """Generate images for all fruits."""
+    generator = StableDiffusionGenerator()
     for cfg in FRUIT_CONFIGS_FOR_ALL_NAMES:
-        generate_images_for_fruit(cfg, generator=StableDiffusionGenerator())
+        generate_images_for_fruit(cfg, generator=generator)
 
 def generate_masks(cfg: FruitConfig, save_examples: bool = True) -> tp.List[const.SampleType]:
     """Generate and return masks for fruit, use parameters from config."""
@@ -53,12 +54,23 @@ def generate_masks(cfg: FruitConfig, save_examples: bool = True) -> tp.List[cons
                 cv2.imwrite(str(example_path), example)
     return samples
 
-def generate_masks_for_all_fruits():
+def generate_background():
+    """Generate background."""
+    generator = StableDiffusionGenerator()
+    images = generator.generate_images(
+        prompt='A shiny squared metal tray view from above.',
+        num_images_per_prompt=const.STABLE_DIFFUSION_BATCH_SIZE,
+        num_runs=(const.NUM_BACKGROUND_IMAGES // const.STABLE_DIFFUSION_BATCH_SIZE) + 1,
+    )
+    images = images[:const.NUM_BACKGROUND_IMAGES]
+    generator.save_images(images, const.BACKGROUND_DIR, 'background', suffix='.jpeg')
+
+def generate_masks_for_all_fruits(dataset_name: str = 'generated_dataset.json'):
     """Generate images for all fruits."""
     samples: tp.List[const.SampleType] = []
     for cfg in FRUIT_CONFIGS_FOR_ALL_NAMES:
         samples.extend(generate_masks(cfg))
-    utils.save_json(const.DATA_DIR / 'generated_dataset.json', samples)
+    utils.save_json(const.DATA_DIR / dataset_name, samples)
 
 
 def show_masks(cfg: FruitConfig) -> None:

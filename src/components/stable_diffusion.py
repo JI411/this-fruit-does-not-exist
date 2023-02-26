@@ -4,7 +4,6 @@ import torch
 from diffusers import StableDiffusionPipeline
 
 import const
-from src.components import utils
 
 
 class StableDiffusionGenerator:
@@ -14,7 +13,6 @@ class StableDiffusionGenerator:
         """Init Stable Diffusion Generator."""
         self.pipe = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", torch_dtype=torch.float16)
         self.pipe = self.pipe.to("cuda")
-        utils.seed_everything(const.SEED)
 
     def run(self, prompt: str, num_images_per_prompt: int = 3):
         """Generate images from prompt."""
@@ -29,10 +27,10 @@ class StableDiffusionGenerator:
         return all_images
 
     @staticmethod
-    def save_images(images, save_path: const.PathType, name: str) -> None:
+    def save_images(images, save_path: const.PathType, name: str, suffix: str = '.jpg') -> None:
         """Save images to disk."""
         name = name.lower().replace(' ', '_').replace('.', '')
         save_path = Path(save_path)
         save_path.mkdir(exist_ok=True, parents=True)
         for i, image in enumerate(images):
-            image.save(save_path / f'{name}_{i}.jpg')
+            image.save(save_path / f'{name}_{i}{suffix}')

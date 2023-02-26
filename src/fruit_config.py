@@ -10,7 +10,7 @@ class FruitConfig:
     name: str
     prompt: tp.Optional[str] = None
     num_images: int = 30
-    hsv_lower: tp.Iterable[tp.Tuple[int, int, int]] = ((0, 40, 0),)
+    hsv_lower: tp.Iterable[tp.Tuple[int, int, int]] = ((0, 50, 0),)
     hsv_upper: tp.Iterable[tp.Tuple[int, int, int]] = ((255, 255, 255),)
     size_limit: tp.Tuple[int, int] = (30 * 30, 350 * 350)
     mask_threshold: float = 0.5
