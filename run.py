@@ -22,7 +22,7 @@ def main(args):
         generate_dataset.generate_masks_for_all_fruits()
         generate_background()
 
-    if args.skip_train:
+    if args.skip_training:
         return
 
     batch_size = args.batch
