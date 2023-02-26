@@ -1,11 +1,8 @@
 import json
-import os
-import random
 import typing as tp
 
 import cv2
 import numpy as np
-import torch
 from matplotlib import pyplot as plt
 
 import const

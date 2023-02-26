@@ -14,7 +14,9 @@ from src.train.model import UnetWrapper
 
 def main(args):
     """Main function. Generate images and masks for all fruits, train segmentation model."""
-    # seed_everything(const.SEED, workers=True)  # todo: fix seed
+    if not args.no_seed:
+        seed_everything(const.SEED, workers=True)
+
     if not args.skip_generation:
         generate_dataset.generate_images_for_fruits()
         generate_dataset.generate_masks_for_all_fruits()
@@ -45,13 +47,16 @@ def main(args):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument(
-        '--batch', type=int, action='store', default=None, help='Batch size. Default: find batch size with Trainer'
+        '--batch', type=int, action='store', default=None, help='Batch size. Default: find batch size with Trainer.'
     )
     parser.add_argument(
-        '--skip-generation', action='store_true', help='If used, skip images generation'
+        '--skip-generation', action='store_true', help='Skip images generation.'
     )
     parser.add_argument(
-        '--skip-train', action='store_true', help='If used, skip model training'
+        '--skip-training', action='store_true', help='Skip model training.'
+    )
+    parser.add_argument(
+        '--no-seed', action='store_true', help="Use random seed."
     )
     parser = Trainer.add_argparse_args(parser)
     arguments = parser.parse_args()
