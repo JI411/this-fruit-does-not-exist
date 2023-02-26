@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 import pytorch_lightning as pl
 import torch
-from segmentation_models_pytorch.losses import FocalLoss
+from segmentation_models_pytorch.losses import FocalLoss, DiceLoss
 from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DataLoader
 
@@ -31,7 +31,7 @@ class BaseFruitSegmentationModule(pl.LightningModule):
         super().__init__()
 
         self.model = model
-        self.loss = FocalLoss(mode='binary')
+        self.loss = DiceLoss(mode='binary')
         self.batch_size = batch_size
 
     def training_step(self, batch: torch.Tensor, batch_idx: int) -> torch.Tensor:
