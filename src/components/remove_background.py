@@ -37,14 +37,16 @@ def bg_remove_hsv(
 
 def bg_remove_grabcut(image: np.ndarray, mask: np.ndarray) -> np.ndarray:
     """Remove background using GrabCut algorithm."""
-    if mask.sum() <= 10:
+    mask += 2  # 3 - probably foreground, 2 - probably background
+    try:
+        mask, _, _ = cv2.grabCut(
+            img=image, mask=mask, rect=None,
+            bgdModel=np.zeros((1, 65), np.float64), fgdModel=np.zeros((1, 65), np.float64),
+            iterCount=5, mode=cv2.GC_INIT_WITH_MASK,
+        )
+    except cv2.error:
+        # Catch error when initial mask is empty. Strange opencv behaviour sometimes :(
         return np.zeros_like(mask)
-    mask += 2
-    mask, _, _ = cv2.grabCut(
-        img=image, mask=mask, rect=None,
-        bgdModel=np.zeros((1, 65), np.float64), fgdModel=np.zeros((1, 65), np.float64),
-        iterCount=5, mode=cv2.GC_INIT_WITH_MASK,
-    )
     mask = np.where((mask == 2) | (mask == 0), 0, 1).astype('uint8')
     mask = cv2.erode(mask, None, iterations=1)
     mask = cv2.dilate(mask, None, iterations=1)
