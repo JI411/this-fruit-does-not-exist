@@ -41,7 +41,7 @@ class BaseFruitSegmentationModule(pl.LightningModule):
         score = self.loss.forward(y_pred=predict, y_true=batch['mask'])
         self.log("train_loss", score)
 
-        if self.logger is not None and batch_idx % 2 == 0:
+        if self.logger is not None and self.current_epoch % 10 == 0 and batch_idx % 25 == 0:
             sample, original_sample = batch['image'][0][None], batch['original_image'][0][None]
             self._log_images(sample, original_sample, key=f'synthetic_{batch_idx}')
         return score
@@ -78,7 +78,7 @@ class FruitSegmentationModule(BaseFruitSegmentationModule):  # pylint: disable=t
 
     def validation_step(self, batch: torch.Tensor, batch_idx: int) -> None:
         """Validate model on batch."""
-        if self.logger is not None:
+        if self.logger is not None and self.current_epoch % 10 == 0:
             self._log_images(batch['image'], batch['original_image'], key=f'real_{batch_idx}')
 
     def val_dataloader(self) -> DataLoader:
