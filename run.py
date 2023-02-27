@@ -19,7 +19,7 @@ def main(args):
 
     if not args.skip_generation:
         generate_dataset.generate_images_for_fruits()
-        generate_dataset.generate_masks_for_all_fruits()
+        generate_dataset.generate_masks_for_all_fruits(grabcut=not args.skip_grabcut)
         generate_background()
 
     if args.skip_training:
@@ -53,10 +53,13 @@ if __name__ == "__main__":
         '--skip-generation', action='store_true', help='Skip images generation.'
     )
     parser.add_argument(
+        '--skip_grabcut', action='store_true', help='Skip GrabCut in unsupervised segmentation.'
+    )
+    parser.add_argument(
         '--skip-training', action='store_true', help='Skip model training.'
     )
     parser.add_argument(
-        '--no-seed', action='store_true', help="Use random seed."
+        '--no-seed', action='store_true', help="Use random initialization of algorithms."
     )
     parser = Trainer.add_argparse_args(parser)
     arguments = parser.parse_args()

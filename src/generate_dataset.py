@@ -6,7 +6,7 @@ import numpy as np
 
 import const
 from src.components import utils
-from src.components.remove_background import bg_remove_hsv
+from src.components.remove_background import bg_remove_hsv, bg_remove_grabcut_and_hsv
 from src.components.stable_diffusion import StableDiffusionGenerator
 from src.fruit_config import FruitConfig, FRUIT_CONFIGS_FOR_ALL_NAMES
 
@@ -30,12 +30,15 @@ def generate_images_for_fruits():
     for cfg in FRUIT_CONFIGS_FOR_ALL_NAMES:
         generate_images_for_fruit(cfg, generator=generator)
 
-def generate_masks(cfg: FruitConfig, save_examples: bool = True) -> tp.List[const.SampleType]:
+def generate_masks(cfg: FruitConfig, save_examples: bool = True, grabcut: bool = True) -> tp.List[const.SampleType]:
     """Generate and return masks for fruit, use parameters from config."""
     samples: tp.List[const.SampleType] = []
     for image_path in (const.DATA_DIR / cfg.name).rglob('*.jpg'):
         image = utils.read_image(image_path)
-        mask = bg_remove_hsv(image=image, hsv_lower=cfg.hsv_lower, hsv_upper=cfg.hsv_upper)
+        if grabcut:
+            mask = bg_remove_grabcut_and_hsv(image=image, hsv_lower=cfg.hsv_lower, hsv_upper=cfg.hsv_upper)
+        else:
+            mask = bg_remove_hsv(image=image, hsv_lower=cfg.hsv_lower, hsv_upper=cfg.hsv_upper)
         mask: np.ndarray = mask > cfg.mask_threshold
         mask_size = mask.sum()
         if cfg.size_limit[0] < mask_size < cfg.size_limit[1]:
@@ -65,11 +68,11 @@ def generate_background():
     images = images[:const.NUM_BACKGROUND_IMAGES]
     generator.save_images(images, const.BACKGROUND_DIR, 'background', suffix='.jpeg')
 
-def generate_masks_for_all_fruits(dataset_name: str = 'generated_dataset.json'):
+def generate_masks_for_all_fruits(dataset_name: str = 'generated_dataset.json', grabcut: bool = True):
     """Generate images for all fruits."""
     samples: tp.List[const.SampleType] = []
     for cfg in FRUIT_CONFIGS_FOR_ALL_NAMES:
-        samples.extend(generate_masks(cfg))
+        samples.extend(generate_masks(cfg, grabcut=grabcut))
     utils.save_json(const.DATA_DIR / dataset_name, samples)
 
 
