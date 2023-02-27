@@ -46,14 +46,15 @@ class BaseFruitSegmentationModule(pl.LightningModule):
         return score
 
     @torch.no_grad()
-    def _log_images(self, sample: torch.Tensor, original_sample: torch.Tensor, key: str):
+    def _log_images(self, sample: torch.Tensor, original_sample: torch.Tensor, key: str, normalize: bool = False):
         predict = self.model(sample)
         predict = tensor_to_numpy_image(torch.sigmoid(predict))
-        predict -= predict.min()
-        predict /= predict.max() + 1e-5
+        if normalize:
+            predict -= predict.min()
+            predict /= predict.max() + 1e-5
         original_image = tensor_to_numpy_image(original_sample)
         self.logger.log_image(
-            key=f'{key}',
+            key=f'{key}_normalized' if normalize else key,
             images=[original_image for _ in self.mask_logging_thresholds],
             masks=[
                 {"prediction": {"mask_data": (predict > th), "class_labels": {0: "fruit"}}}
