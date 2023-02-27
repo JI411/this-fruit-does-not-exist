@@ -42,18 +42,19 @@ class BaseFruitSegmentationModule(pl.LightningModule):
 
         if self.logger is not None and self.current_epoch % 10 == 0 and batch_idx % 25 == 0:
             sample, original_sample = batch['image'][0][None], batch['original_image'][0][None]
-            self._log_images(sample, original_sample, key=f'synthetic_{batch_idx}')
+            self._log_images(sample, original_sample, key=f'synthetic_image_{batch_idx}')
         return score
 
     @torch.no_grad()
-    def _log_images(self, sample: torch.Tensor, original_sample: torch.Tensor, key: str):
+    def _log_images(self, sample: torch.Tensor, original_sample: torch.Tensor, key: str, normalize: bool = False):
         predict = self.model(sample)
         predict = tensor_to_numpy_image(torch.sigmoid(predict))
-        predict -= predict.min()
-        predict /= predict.max() + 1e-5
+        if normalize:
+            predict -= predict.min()
+            predict /= predict.max() + 1e-5
         original_image = tensor_to_numpy_image(original_sample)
         self.logger.log_image(
-            key=f'{key}',
+            key=f'{key}_normalized' if normalize else key,
             images=[original_image for _ in self.mask_logging_thresholds],
             masks=[
                 {"prediction": {"mask_data": (predict > th), "class_labels": {0: "fruit"}}}
@@ -82,7 +83,7 @@ class FruitSegmentationModule(BaseFruitSegmentationModule):  # pylint: disable=t
     def validation_step(self, batch: torch.Tensor, batch_idx: int) -> None:
         """Validate model on batch."""
         if self.logger is not None and self.current_epoch % 10 == 0:
-            self._log_images(batch['image'], batch['original_image'], key=f'real_{batch_idx}')
+            self._log_images(batch['image'], batch['original_image'], key=f'real_image_{batch_idx}')
 
     def val_dataloader(self) -> DataLoader:
         """Get inference dataloader."""
