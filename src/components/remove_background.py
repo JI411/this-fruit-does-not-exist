@@ -1,12 +1,18 @@
 import typing as tp
 
+import albumentations as albu
 import cv2
 import numpy as np
+import timm
+from albumentations.pytorch import ToTensorV2
+from pytorch_grad_cam import HiResCAM
+from pytorch_grad_cam.base_cam import BaseCAM
+from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
 
 import const
 
 
-def find_objects(binary_map: np.ndarray, min_area: int = 600)-> np.ndarray:
+def find_objects(binary_map: np.ndarray, min_area: int = 600) -> np.ndarray:
     """Remove small connected components from a binary image."""
     _, labels, stats, _ = cv2.connectedComponentsWithStats(binary_map, 8, cv2.CV_32S)
     areas = stats[1:, cv2.CC_STAT_AREA]
@@ -43,6 +49,26 @@ def bg_remove_grabcut(image: np.ndarray, mask: np.ndarray) -> np.ndarray:
     mask = cv2.erode(mask, None, iterations=1)
     mask = cv2.dilate(mask, None, iterations=1)
     return mask
+
+
+def bg_remove_grad_cam(
+        image: np.ndarray, cam: tp.Optional[BaseCAM] = None, category: int = 954, threshold: float = 0.3,
+) -> np.ndarray:
+    """Remove background using Grad-CAM."""
+    if cam is None:
+        model = timm.create_model('resnet34', pretrained=True)
+        cam or HiResCAM(model=model, target_layers=[model.layer4[-1]], use_cuda=False)
+
+    transform = albu.Compose([albu.Resize(224, 224), albu.Normalize(), ToTensorV2()])
+
+    input_tensor = transform(image=image)['image'][None]
+    targets = [ClassifierOutputTarget(category)]
+    # noinspection PyTypeChecker
+    grayscale_cam = cam(input_tensor=input_tensor, targets=targets)
+    grayscale_cam = grayscale_cam[0, :]
+    grayscale_cam = cv2.resize(grayscale_cam, (image.shape[1], image.shape[0]))
+    grayscale_cam = cv2.cvtColor(grayscale_cam, cv2.COLOR_GRAY2BGR)
+    return grayscale_cam > threshold
 
 def bg_remove_grabcut_and_hsv(
         image: np.ndarray,
