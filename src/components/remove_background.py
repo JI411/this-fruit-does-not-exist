@@ -59,7 +59,7 @@ def bg_remove_grad_cam(
     """Remove background using Grad-CAM."""
     if cam is None:
         model = timm.create_model('resnet34', pretrained=True)
-        cam or HiResCAM(model=model, target_layers=[model.layer4[-1]], use_cuda=False)
+        cam = HiResCAM(model=model, target_layers=[model.layer4[-1]], use_cuda=False)
 
     transform = albu.Compose([albu.Resize(224, 224), albu.Normalize(), ToTensorV2()])
 
