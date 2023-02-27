@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader
 
 import const
 from src.train.dataset import SyntheticFruitDataset, RealFruitDataset
-from src.train.loss import MultipleCriterionWrapper
+from src.train.loss import AggregatedLoss
 from src.train.model import BaseModel
 
 
@@ -32,7 +32,7 @@ class BaseFruitSegmentationModule(pl.LightningModule):
         super().__init__()
 
         self.model = model
-        self.loss = MultipleCriterionWrapper((DiceLoss(mode='binary'), FocalLoss(mode='binary')))
+        self.loss = AggregatedLoss((DiceLoss(mode='binary'), FocalLoss(mode='binary')))
         self.batch_size = batch_size
 
     def training_step(self, batch: torch.Tensor, batch_idx: int) -> torch.Tensor:
