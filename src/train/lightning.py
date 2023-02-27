@@ -64,7 +64,7 @@ class BaseFruitSegmentationModule(pl.LightningModule):
 
     def configure_optimizers(self):
         """Configure optimizer."""
-        optimizer = torch.optim.AdamW(self.parameters(), lr=1e-3)
+        optimizer = torch.optim.AdamW(self.parameters(), lr=1e-4)
         scheduler = StepLR(optimizer, step_size=10, gamma=0.1)
         return [optimizer], [scheduler]
 

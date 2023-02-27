@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 
 from pytorch_lightning import Trainer
-from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.utilities.seed import seed_everything
 
@@ -40,7 +40,8 @@ def main(args):
     checkpoint_callback = ModelCheckpoint(
         monitor="train_loss", mode="min", filename="best_model_{epoch:02d}_{train_loss:.2f}",
     )
-    trainer = Trainer.from_argparse_args(args, logger=wandb_logger, callbacks=[checkpoint_callback])
+    lr_monitor = LearningRateMonitor(logging_interval='step')
+    trainer = Trainer.from_argparse_args(args, logger=wandb_logger, callbacks=[checkpoint_callback, lr_monitor])
     trainer.fit(model)
 
 
