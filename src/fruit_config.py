@@ -19,7 +19,7 @@ class FruitConfig:
         """Post init hook. Convert lists to tuples and set default prompt."""
         self.hsv_lower = tuple(self.hsv_lower)
         self.hsv_upper = tuple(self.hsv_upper)
-        self.prompt = self.prompt or f'A colored single {self.name.lower()} on a plain white or gray background.'
+        self.prompt = self.prompt or f'A coloured single {self.name.lower()} on a plain white or gray background.'
 
 
 banana = FruitConfig(
