@@ -10,6 +10,7 @@ segmentation-models-pytorch==0.3.2
 pytorch-lightning==1.9.3
 wandb==0.13.10
 timm==0.6.12
+grad-cam==1.4.6
 
 # Stable Diffusion
 diffusers==0.11.1
