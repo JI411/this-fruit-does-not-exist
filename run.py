@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 
 from pytorch_lightning import Trainer
-from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.utilities.seed import seed_everything
 
@@ -19,7 +19,7 @@ def main(args):
 
     if not args.skip_generation:
         generate_dataset.generate_images_for_fruits()
-        generate_dataset.generate_masks_for_all_fruits()
+        generate_dataset.generate_masks_for_all_fruits(grabcut=not args.skip_grabcut)
         generate_background()
 
     if args.skip_training:
@@ -40,7 +40,8 @@ def main(args):
     checkpoint_callback = ModelCheckpoint(
         monitor="train_loss", mode="min", filename="best_model_{epoch:02d}_{train_loss:.2f}",
     )
-    trainer = Trainer.from_argparse_args(args, logger=wandb_logger, callbacks=[checkpoint_callback])
+    lr_monitor = LearningRateMonitor(logging_interval='step')
+    trainer = Trainer.from_argparse_args(args, logger=wandb_logger, callbacks=[checkpoint_callback, lr_monitor])
     trainer.fit(model)
 
 
@@ -53,10 +54,13 @@ if __name__ == "__main__":
         '--skip-generation', action='store_true', help='Skip images generation.'
     )
     parser.add_argument(
+        '--skip_grabcut', action='store_true', help='Skip GrabCut in unsupervised segmentation.'
+    )
+    parser.add_argument(
         '--skip-training', action='store_true', help='Skip model training.'
     )
     parser.add_argument(
-        '--no-seed', action='store_true', help="Use random seed."
+        '--no-seed', action='store_true', help="Use random initialization of algorithms."
     )
     parser = Trainer.add_argparse_args(parser)
     arguments = parser.parse_args()

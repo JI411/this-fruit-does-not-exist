@@ -6,12 +6,13 @@ import cv2
 import numpy as np
 import pytorch_lightning as pl
 import torch
-from segmentation_models_pytorch.losses import FocalLoss
+from segmentation_models_pytorch.losses import FocalLoss, DiceLoss
 from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DataLoader
 
 import const
 from src.train.dataset import SyntheticFruitDataset, RealFruitDataset
+from src.train.loss import AggregatedLoss
 from src.train.model import BaseModel
 
 
@@ -31,7 +32,7 @@ class BaseFruitSegmentationModule(pl.LightningModule):
         super().__init__()
 
         self.model = model
-        self.loss = FocalLoss(mode='binary')
+        self.loss = AggregatedLoss((DiceLoss(mode='binary'), FocalLoss(mode='binary')))
         self.batch_size = batch_size
 
     def training_step(self, batch: torch.Tensor, batch_idx: int) -> torch.Tensor:
@@ -40,7 +41,7 @@ class BaseFruitSegmentationModule(pl.LightningModule):
         score = self.loss.forward(y_pred=predict, y_true=batch['mask'])
         self.log("train_loss", score)
 
-        if self.logger is not None and batch_idx % 2 == 0:
+        if self.logger is not None and self.current_epoch % 10 == 0 and batch_idx % 25 == 0:
             sample, original_sample = batch['image'][0][None], batch['original_image'][0][None]
             self._log_images(sample, original_sample, key=f'synthetic_{batch_idx}')
         return score
@@ -63,7 +64,7 @@ class BaseFruitSegmentationModule(pl.LightningModule):
 
     def configure_optimizers(self):
         """Configure optimizer."""
-        optimizer = torch.optim.AdamW(self.parameters(), lr=1e-3)
+        optimizer = torch.optim.AdamW(self.parameters(), lr=1e-4)
         scheduler = StepLR(optimizer, step_size=10, gamma=0.1)
         return [optimizer], [scheduler]
 
@@ -77,7 +78,7 @@ class FruitSegmentationModule(BaseFruitSegmentationModule):  # pylint: disable=t
 
     def validation_step(self, batch: torch.Tensor, batch_idx: int) -> None:
         """Validate model on batch."""
-        if self.logger is not None:
+        if self.logger is not None and self.current_epoch % 10 == 0:
             self._log_images(batch['image'], batch['original_image'], key=f'real_{batch_idx}')
 
     def val_dataloader(self) -> DataLoader:
