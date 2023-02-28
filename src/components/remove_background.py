@@ -83,3 +83,20 @@ def bg_remove_grabcut_and_hsv(
     mask = cv2.erode(mask, None, iterations=7)
     mask = (mask > mask_threshold).astype(np.uint8)
     return bg_remove_grabcut(image, mask)
+
+def get_contours(mask: np.ndarray) -> tp.Tuple[tp.List[np.ndarray], np.ndarray]:
+    """Find contours with hierarchy."""
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    return contours
+
+def split_mask(mask: np.ndarray) -> tp.List[np.ndarray]:
+    """Split mask into separate masks."""
+    mask = find_objects(mask)
+    contours = get_contours(mask)
+    masks = []
+    for cnt in contours:
+        zero_mask = np.zeros_like(mask)
+        cv2.drawContours(zero_mask, [cnt], -1, 255, -1)
+        masks.append(zero_mask)
+    return masks
+

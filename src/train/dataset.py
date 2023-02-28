@@ -1,6 +1,7 @@
 # pylint: disable=super-init-not-called
 
 import typing as tp
+from functools import partial
 
 import albumentations as albu
 import numpy as np
@@ -46,7 +47,7 @@ class BaseFruitDataset(Dataset):
 class SyntheticFruitDataset(BaseFruitDataset):
     """Dataset for synthetic fruit images."""
 
-    num_samples_on_bg: tp.Tuple[int, ...] = (1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 4, 5)
+    num_samples_on_bg: tp.Tuple[int, ...] = tuple(np.random.binomial(n=16, p=0.5, size=800))
 
     def __init__(
             self,
