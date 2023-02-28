@@ -1,7 +1,6 @@
 # pylint: disable=super-init-not-called
 
 import typing as tp
-from functools import partial
 
 import albumentations as albu
 import numpy as np

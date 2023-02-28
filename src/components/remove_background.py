@@ -99,4 +99,3 @@ def split_mask(mask: np.ndarray) -> tp.List[np.ndarray]:
         cv2.drawContours(zero_mask, [cnt], -1, 255, -1)
         masks.append(zero_mask)
     return masks
-
