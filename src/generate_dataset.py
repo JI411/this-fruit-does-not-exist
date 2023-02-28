@@ -37,6 +37,9 @@ def generate_masks(
     samples: tp.List[const.SampleType] = []
     for image_path in (const.DATA_DIR / cfg.name).rglob('*.jpg'):
         image = utils.read_image(image_path)
+        masks_dir = image_path.parent / 'masks'
+        masks_dir.mkdir(exist_ok=True)
+
         if grabcut:
             mask = rb.bg_remove_grabcut_and_hsv(image=image, hsv_lower=cfg.hsv_lower, hsv_upper=cfg.hsv_upper)
         else:
@@ -44,8 +47,6 @@ def generate_masks(
 
         masks: tp.List[np.ndarray] = rb.split_mask(mask) + [mask] if split_mask else [mask]
         for i, mask in enumerate(masks):
-            masks_dir = image_path.parent / 'masks'
-            masks_dir.mkdir(exist_ok=True)
             mask = mask > cfg.mask_threshold
             mask_size = mask.sum()
             if cfg.size_limit[0] < mask_size < cfg.size_limit[1]:
