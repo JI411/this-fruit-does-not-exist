@@ -24,7 +24,7 @@ def tensor_to_numpy_image(tensor: torch.Tensor) -> tp.Any:
 class BaseFruitSegmentationModule(pl.LightningModule):
     """Lightning wrapper for models, connect loss, dataloader and model."""
 
-    mask_logging_thresholds = (0., 0.1, 0.2, 0.3, 0.5, 0.6, 0.8)
+    mask_logging_thresholds = (0.2, 0.3, 0.4, 0.5, 0.6, 0.7)
 
     def __init__(self, model: BaseModel, batch_size: int) -> None:
         """Create model for training."""
@@ -40,7 +40,7 @@ class BaseFruitSegmentationModule(pl.LightningModule):
         score = self.loss.forward(y_pred=predict, y_true=batch['mask'])
         self.log("train_loss", score, on_step=True, logger=True)
 
-        if self.logger is not None and self.current_epoch % 10 == 0 and batch_idx % 25 == 0:
+        if self.logger is not None and self.current_epoch % 10 == 0 and batch_idx == 0:
             sample, original_sample = batch['image'][0][None], batch['original_image'][0][None]
             self._log_images(sample, original_sample, key=f'synthetic_image_{batch_idx}')
         return score
