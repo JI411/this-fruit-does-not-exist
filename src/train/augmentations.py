@@ -11,7 +11,7 @@ def get_default_augmentation_synthetic_samples():
         albu.ColorJitter(p=0.2),
 
         albu.Resize(384, 384, p=1),
-        albu.RandomScale(scale_limit=(-0.4, 0.2), p=1),
+        albu.RandomScale(scale_limit=(-0.5, 0.25), p=1),
         albu.PadIfNeeded(min_height=512, min_width=512, border_mode=cv2.BORDER_CONSTANT, value=0, mask_value=0, p=1),
 
         albu.RandomRotate90(p=0.1),

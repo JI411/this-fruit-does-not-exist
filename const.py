@@ -15,7 +15,7 @@ SampleType = tp.TypedDict('SampleType', {'image_path': str, 'mask_path': str, 'f
 STABLE_DIFFUSION_BATCH_SIZE: tp.Final[int] = 5
 SEED: tp.Final[int] = 411
 NUM_SAMPLES_PER_FRUIT: tp.Final[int] = 30
-NUM_BACKGROUND_IMAGES: tp.Final[int] = 50
+NUM_BACKGROUND_IMAGES: tp.Final[int] = 120
 
 # Paths
 ROOT_DIR = Path(__file__).resolve(strict=True).parent

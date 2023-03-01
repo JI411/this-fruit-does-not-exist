@@ -12,7 +12,7 @@ class FruitConfig:
     num_images: int = 30
     hsv_lower: tp.Iterable[tp.Tuple[int, int, int]] = ((0, 50, 0),)
     hsv_upper: tp.Iterable[tp.Tuple[int, int, int]] = ((255, 255, 255),)
-    size_limit: tp.Tuple[int, int] = (30 * 30, 350 * 350)
+    size_limit: tp.Tuple[int, int] = (10 * 10, 300 * 300)
     mask_threshold: float = 0.5
 
     def __post_init__(self):

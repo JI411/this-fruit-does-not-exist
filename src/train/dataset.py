@@ -34,6 +34,11 @@ def augmentation_with_mask(image, mask, augmentation) -> tp.Tuple[np.ndarray, np
     mask: tp.Union[torch.Tensor, np.ndarray] = augmented['mask'] > 0.5
     return image, mask
 
+def random_binomial(n: int, p: float, size: int) -> tp.Tuple[int, ...]:  # pylint: disable=invalid-name
+    """Return random binomial vector only with positive values."""
+    binomial_vector = np.random.binomial(n=n, p=p, size=size)
+    return tuple(np.where(binomial_vector < 1, 1, binomial_vector))
+
 class BaseFruitDataset(Dataset):
     """Base class for fruit dataset."""
     resize = transform__resize()
@@ -45,8 +50,7 @@ class BaseFruitDataset(Dataset):
 
 class SyntheticFruitDataset(BaseFruitDataset):
     """Dataset for synthetic fruit images."""
-
-    num_samples_on_bg: tp.Tuple[int, ...] = (1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 4, 5)
+    num_samples_on_bg: tp.Tuple[int, ...] = random_binomial(n=14, p=0.5, size=800)
 
     def __init__(
             self,
