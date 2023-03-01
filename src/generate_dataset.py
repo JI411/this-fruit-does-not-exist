@@ -39,6 +39,8 @@ def generate_masks(
         image = utils.read_image(image_path)
         masks_dir = image_path.parent / 'masks'
         masks_dir.mkdir(exist_ok=True)
+        example_dir = image_path.parent / 'examples'
+        example_dir.mkdir(exist_ok=True)
 
         if grabcut:
             mask = rb.bg_remove_grabcut_and_hsv(image=image, hsv_lower=cfg.hsv_lower, hsv_upper=cfg.hsv_upper)
@@ -48,20 +50,17 @@ def generate_masks(
         masks: tp.List[np.ndarray] = rb.split_mask(mask) + [mask] if split_mask else [mask]
         for i, mask in enumerate(masks):
             mask = mask > cfg.mask_threshold
-            mask_size = mask.sum()
-            if cfg.size_limit[0] < mask_size < cfg.size_limit[1]:
-                mask_path = masks_dir / f'{image_path.stem}_mask{i}.png'
-                mask_path, image_path = str(mask_path), str(image_path)
+            if cfg.size_limit[0] < mask.sum() < cfg.size_limit[1]:
+                mask_path = str(masks_dir / f'{image_path.stem}_mask{i}.png')
                 cv2.imwrite(mask_path, mask * 255)
-                samples.append({'image_path': image_path, 'mask_path': mask_path, 'fruit_name': cfg.name})
+                samples.append({'image_path': str(image_path), 'mask_path': mask_path, 'fruit_name': cfg.name})
                 if save_examples and i == len(masks) - 1:
                     image_path = Path(image_path)
-                    example_path = image_path.parent / 'examples' / f'{image_path.stem}_example.jpeg'
-                    example_path.parent.mkdir(exist_ok=True)
+                    example_path = str(example_dir / f'{image_path.stem}_example.jpeg')
                     mask = (mask * 255).astype('uint8')
                     mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2RGB) > 0.5
                     example = cv2.cvtColor(mask * image, cv2.COLOR_BGR2RGB)
-                    cv2.imwrite(str(example_path), example)
+                    cv2.imwrite(example_path, example)
     return samples
 
 def generate_background():
