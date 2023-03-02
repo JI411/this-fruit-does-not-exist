@@ -4,6 +4,8 @@ This repository contains code for generating synthetic fruits dataset with Stabl
 For further details, please refer to [this article](https://wandb.ai/lekomtsev/this-fruit-does-not-exist/reports/Experimets-Report--VmlldzozNjQyNDg2).
 
 ## How to use
+<a href="https://colab.research.google.com/drive/1jJcucFWIKTuGIbEeJIgX8wkbiPCVlO26" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+
 
 Install dependencies:
 ```bash
